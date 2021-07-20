@@ -1,9 +1,6 @@
 # Web4.3 Authentication
 
-
-
-
-**Authentication** is the process by which our Web API verifies the identity of a client that is trying to access a resource. 
+**Authentication** is the process by which our Web API verifies the identity of a client that is trying to access a resource.
 
 This is different from **authorization**, which comes after authentication and determines what type of access, if any, that a user should have.
 
@@ -97,7 +94,7 @@ const credentials = req.body;
 
 // find the user in the database by it's username then
 if (!user || !bcrypt.compareSync(credentials.password, user.password)) {
-  return res.status(401).json({ error: 'Incorrect credentials' });
+  return res.status(401).json({ error: "Incorrect credentials" });
 }
 
 // the user is valid, continue on
@@ -116,22 +113,22 @@ If the password guess is valid, the method returns true. Otherwise, it returns f
 Let's see an example.
 
 ```jsx
-server.post('/api/login', (req, res) => {
+server.post("/api/login", (req, res) => {
   let { username, password } = req.body;
 
   Users.findBy({ username })
     .first()
-    .then(user => {
+    .then((user) => {
       // check that passwords match
       if (user && bcrypt.compareSync(password, user.password)) {
         res.status(200).json({ message: `Welcome ${user.username}!` });
       } else {
         // we will return 401 if the password or username are invalid
         // we don't want to let attackers know when they have a good username
-        res.status(401).json({ message: 'Invalid Credentials' });
+        res.status(401).json({ message: "Invalid Credentials" });
       }
     })
-    .catch(error => {
+    .catch((error) => {
       res.status(500).json(error);
     });
 });
@@ -207,11 +204,11 @@ Advantages when using cookies:
 - a cookie is a small key/value pair data structure that is passed back and forth between client and server and stored in the browser.
 - the server uses it to store information about a particular client/user.
 - workflow for using cookies as session storage:
-    - the server issues a cookie with an expiration time and sends it with the response.
-    - browsers automatically store the cookie and send it on every request to the same domain.
-    - the server can read the information contained in the cookie (like the username).
-    - the server can make changes to the cookie before sending it back on the response.
-    - rinse and repeat.
+  - the server issues a cookie with an expiration time and sends it with the response.
+  - browsers automatically store the cookie and send it on every request to the same domain.
+  - the server can read the information contained in the cookie (like the username).
+  - the server can make changes to the cookie before sending it back on the response.
+  - rinse and repeat.
 
 **Express-session uses cookies for session management**.
 
@@ -256,13 +253,13 @@ Here is a list of [express-session compatible stores. (Links to an external si
 Let's add session support to our Web API:
 
 ```jsx
-const session = require('express-session');
+const session = require("express-session");
 
 // configure express-session middleware
 server.use(
   session({
-    name: 'notsession', // default is connect.sid
-    secret: 'nobody tosses a dwarf!',
+    name: "notsession", // default is connect.sid
+    secret: "nobody tosses a dwarf!",
     cookie: {
       maxAge: 1 * 24 * 60 * 60 * 1000,
       secure: true, // only set cookies over https. Server will not send back a cookie over http.
@@ -311,13 +308,13 @@ We can do this by removing the session from our session store. Each library does
 Add the following code for the logout endpoint:
 
 ```jsx
-server.get('/api/logout', (req, res) => {
+server.get("/api/logout", (req, res) => {
   if (req.session) {
-    req.session.destroy(err => {
+    req.session.destroy((err) => {
       if (err) {
-        res.send('error logging out');
+        res.send("error logging out");
       } else {
-        res.send('good bye');
+        res.send("good bye");
       }
     });
   }
@@ -342,7 +339,7 @@ function protected(req, res, next) {
   if (req.session && req.session.userId) {
     next();
   } else {
-    res.status(401).json({ message: 'you shall not pass!!' });
+    res.status(401).json({ message: "you shall not pass!!" });
   }
 }
 ```
@@ -352,10 +349,10 @@ This middleware verifies that we have a session and that the `userId` is set. 
 Then, we add that middleware to the endpoints we'd like to protect.
 
 ```jsx
-server.get('/api/users', protected, (req, res) => {
-  db('users')
-    .then(users => res.json(users))
-    .catch(err => res.json(err));
+server.get("/api/users", protected, (req, res) => {
+  db("users")
+    .then((users) => res.json(users))
+    .catch((err) => res.json(err));
 });
 ```
 
@@ -438,14 +435,14 @@ Let's produce and send a token on a successful login.
 ```jsx
 // ./auth/auth-router.js
 
-const jwt = require('jsonwebtoken'); // installed this library
+const jwt = require("jsonwebtoken"); // installed this library
 
-router.post('/login', (req, res) => {
+router.post("/login", (req, res) => {
   let { username, password } = req.body;
 
   Users.findBy({ username })
     .first()
-    .then(user => {
+    .then((user) => {
       if (user && bcrypt.compareSync(password, user.password)) {
         const token = generateToken(user); // new line
 
@@ -456,10 +453,10 @@ router.post('/login', (req, res) => {
           token, // attach the token as part of the response
         });
       } else {
-        res.status(401).json({ message: 'Invalid Credentials' });
+        res.status(401).json({ message: "Invalid Credentials" });
       }
     })
-    .catch(error => {
+    .catch((error) => {
       res.status(500).json(error);
     });
 });
@@ -472,7 +469,7 @@ function generateToken(user) {
   };
 
   const options = {
-    expiresIn: '1d', // show other available options in the library's documentation
+    expiresIn: "1d", // show other available options in the library's documentation
   };
 
   // extract the secret away so it can be required and used where needed
@@ -485,7 +482,7 @@ function generateToken(user) {
 ```jsx
 // the secrets will be safely stored in an environment variable, these are placeholders for development.
 module.exports = {
-  jwtSecret: process.env.JWT_SECRET || 'add a third table for many to many',
+  jwtSecret: process.env.JWT_SECRET || "add a third table for many to many",
 };
 ```
 
