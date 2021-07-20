@@ -13,3 +13,6 @@ if ( !user || !bcrypt.compareSync( credentials.password, user.password ) ) {
   } );
 }
 // the user is valid, continue on
+
+
+
