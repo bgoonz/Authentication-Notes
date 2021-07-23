@@ -16,7 +16,7 @@
     "cors": "^2.8.1",
     "body-parser": "^1.16.0",
     "helmet": "^3.4.0",
-    "mongodb": "^3.6.5"
+    "mongodb": "^4.0.0"
   },
   "repository": {
     "type": "git",
